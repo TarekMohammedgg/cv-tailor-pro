@@ -29,6 +29,7 @@ export default function App() {
   const [pdfBlob, setPdfBlob] = useState(null)
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null)
   const [compilationError, setCompilationError] = useState(null)
+  const [isRegenerating, setIsRegenerating] = useState(false)
 
   const isConfigured = Boolean(settings.apiKey)
 
@@ -90,6 +91,53 @@ export default function App() {
       setError(err.message)
       setCurrentStep(1)
       setProcessingStatus(null)
+    }
+  }
+
+  const handleRegenerate = async (refinementText) => {
+    if (!refinementText.trim() || !settings.apiKey) return
+
+    setIsRegenerating(true)
+    setError(null)
+    setCompilationError(null)
+
+    try {
+      const newLatex = await generateTailoredCV({
+        cvText,
+        jobDescription,
+        apiKey: settings.apiKey,
+        geminiModel: settings.geminiModel,
+        refinementInstructions: refinementText,
+        previousLatex: latexCode,
+      })
+
+      if (!newLatex || !newLatex.includes('\\documentclass')) {
+        throw new Error('AI did not return valid LaTeX code. Please try again.')
+      }
+
+      setLatexCode(newLatex)
+
+      // Revoke old preview URL before creating a new one
+      if (pdfPreviewUrl) {
+        URL.revokeObjectURL(pdfPreviewUrl)
+        setPdfPreviewUrl(null)
+        setPdfBlob(null)
+      }
+
+      try {
+        const blob = await convertLatexToPdf(newLatex)
+        const previewUrl = createPdfPreviewUrl(blob)
+        setPdfBlob(blob)
+        setPdfPreviewUrl(previewUrl)
+      } catch (compileErr) {
+        console.warn('PDF compilation failed:', compileErr)
+        setCompilationError(compileErr.message)
+      }
+    } catch (err) {
+      console.error('Regeneration failed:', err)
+      setError(err.message)
+    } finally {
+      setIsRegenerating(false)
     }
   }
 
@@ -162,6 +210,8 @@ export default function App() {
             pdfPreviewUrl={pdfPreviewUrl}
             compilationError={compilationError}
             onReset={handleReset}
+            onRegenerate={handleRegenerate}
+            isRegenerating={isRegenerating}
             cvText={cvText}
             jobDescription={jobDescription}
             settings={settings}

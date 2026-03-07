@@ -2,9 +2,11 @@
  * Build the prompt for CV tailoring
  * @param {string} cvText - Original CV text
  * @param {string} jobDescription - Target job description
+ * @param {string} [refinementInstructions] - Optional user refinement instructions
+ * @param {string} [previousLatex] - Optional previously generated LaTeX to refine
  * @returns {string} - Complete prompt
  */
-export function buildCvPrompt(cvText, jobDescription) {
+export function buildCvPrompt(cvText, jobDescription, refinementInstructions, previousLatex) {
   return `You are an expert CV/Resume writer. Your task is to tailor the CV below to match the Job Description, then output it using the EXACT LaTeX template provided.
 
 ## STRICT RULES
@@ -132,5 +134,20 @@ Arabic (Native), English (Fluent)
 \\end{document}
 
 ## OUTPUT
-Output ONLY the filled-in LaTeX code. No explanations. No markdown. Start with \\documentclass and end with \\end{document}.`
+Output ONLY the filled-in LaTeX code. No explanations. No markdown. Start with \\documentclass and end with \\end{document}.${
+  refinementInstructions && previousLatex
+    ? `
+
+## CURRENT TAILORED CV (LaTeX — already generated)
+---
+${previousLatex}
+---
+
+## USER REFINEMENT INSTRUCTIONS
+The user wants the following specific changes applied to the CURRENT CV above:
+${refinementInstructions}
+
+Apply ONLY the requested changes. Keep everything else identical. Output the full updated LaTeX document.`
+    : ''
+}`
 }

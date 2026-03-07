@@ -4,8 +4,8 @@ import { buildEmailPrompt } from '../prompts/emailPrompt.js'
 /**
  * Generate tailored CV LaTeX
  */
-export async function generateTailoredCV({ cvText, jobDescription, apiKey, geminiModel }) {
-  const prompt = buildCvPrompt(cvText, jobDescription)
+export async function generateTailoredCV({ cvText, jobDescription, apiKey, geminiModel, refinementInstructions, previousLatex }) {
+  const prompt = buildCvPrompt(cvText, jobDescription, refinementInstructions, previousLatex)
   return callGemini(prompt, apiKey, geminiModel)
 }
 

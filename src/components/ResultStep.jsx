@@ -8,9 +8,21 @@ import {
   RotateCcw,
   ExternalLink,
   AlertTriangle,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
 } from 'lucide-react'
 import { downloadPdf } from '../lib/latexToPdf.js'
 import EmailSection from './EmailSection.jsx'
+
+const SUGGESTION_CHIPS = [
+  { label: 'Reorder sections', text: 'Move Skills section before Experience.' },
+  { label: 'Shorten summary', text: 'Shorten the Summary to 2-3 concise lines.' },
+  { label: 'More keywords', text: 'Add more relevant keywords from the job description.' },
+  { label: 'Professional tone', text: 'Make the language more formal and professional.' },
+  { label: 'Stronger bullets', text: 'Rewrite bullet points to start with strong action verbs and include metrics.' },
+]
 
 export default function ResultStep({
   latexCode,
@@ -18,12 +30,16 @@ export default function ResultStep({
   pdfPreviewUrl,
   compilationError,
   onReset,
+  onRegenerate,
+  isRegenerating,
   cvText,
   jobDescription,
   settings,
 }) {
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState(pdfBlob ? 'preview' : 'latex')
+  const [refineOpen, setRefineOpen] = useState(false)
+  const [refinementText, setRefinementText] = useState('')
 
   const handleCopyLatex = async () => {
     try {
@@ -41,6 +57,20 @@ export default function ResultStep({
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
+  }
+
+  const handleRegenerate = async () => {
+    if (!refinementText.trim() || isRegenerating) return
+    await onRegenerate(refinementText)
+    setRefinementText('')
+  }
+
+  const appendChip = (text) => {
+    setRefinementText((prev) => {
+      const trimmed = prev.trimEnd()
+      return trimmed ? `${trimmed} ${text}` : text
+    })
+    setRefineOpen(true)
   }
 
   const handleDownload = () => {
@@ -135,6 +165,72 @@ export default function ResultStep({
         </div>
       )}
 
+      {/* Refine Panel */}
+      <div className="card border-indigo-500/15 bg-gradient-to-r from-indigo-500/5 to-violet-500/5 p-0 overflow-hidden">
+        <button
+          onClick={() => setRefineOpen((o) => !o)}
+          className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition"
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-indigo-400" />
+            <span className="text-sm font-medium text-white">Refine your CV</span>
+          </div>
+          {refineOpen ? (
+            <ChevronUp size={16} className="text-gray-400" />
+          ) : (
+            <ChevronDown size={16} className="text-gray-400" />
+          )}
+        </button>
+
+        {refineOpen && (
+          <div className="px-5 pb-5 space-y-4 border-t border-white/5">
+            <p className="text-xs text-gray-400 pt-4">
+              Describe the changes you'd like applied to your CV:
+            </p>
+
+            <textarea
+              value={refinementText}
+              onChange={(e) => setRefinementText(e.target.value)}
+              disabled={isRegenerating}
+              placeholder="e.g., Move Skills before Experience, shorten the summary to 2 lines, add more Python keywords..."
+              className="input-field w-full resize-none"
+              style={{ minHeight: '80px' }}
+            />
+
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Quick suggestions:</p>
+              <div className="flex flex-wrap gap-2">
+                {SUGGESTION_CHIPS.map((chip) => (
+                  <button
+                    key={chip.label}
+                    onClick={() => appendChip(chip.text)}
+                    disabled={isRegenerating}
+                    className="px-3 py-1 rounded-full text-xs border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10 hover:border-indigo-500/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={handleRegenerate}
+                disabled={isRegenerating || !refinementText.trim()}
+                className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isRegenerating ? (
+                  <RefreshCw size={16} className="animate-spin" />
+                ) : (
+                  <RefreshCw size={16} />
+                )}
+                {isRegenerating ? 'Regenerating…' : 'Regenerate CV'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Email Generator */}
       <EmailSection
         cvText={cvText}
@@ -143,7 +239,7 @@ export default function ResultStep({
       />
 
       {/* Tabs */}
-      <div className="card p-0 overflow-hidden">
+      <div className={`card p-0 overflow-hidden transition ${isRegenerating ? 'opacity-50 pointer-events-none' : ''}`}>
         <div className="flex border-b border-white/5">
           {pdfBlob && (
             <button
