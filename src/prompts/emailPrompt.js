@@ -5,19 +5,24 @@
  * @returns {string} - Complete prompt
  */
 export function buildEmailPrompt(cvText, jobDescription) {
-  return `You are an expert career consultant who writes professional job application emails.
+  return `You are a senior HR recruiter with 15+ years of experience. You know exactly what makes a hiring manager stop and read an application email vs. delete it. Write an application email FROM the candidate below TO a hiring team.
 
-## TASK
-Generate a professional email to send to a hiring manager / recruitment team along with a CV/resume attachment. The email should be concise, compelling, and tailored to the job description.
+## WHAT RECRUITERS ACTUALLY WANT (follow these strictly):
+1. SUBJECT LINE: Must include the exact job title from the JD + candidate name. No creativity — recruiters filter by subject. Example: "Application for [Job Title] — [Candidate Name]"
+2. OPENING: One sentence max. State the role you're applying for and ONE hook (strongest match to JD). NO "I am writing to express my enthusiastic interest" — that's filler that recruiters skip.
+3. VALUE PARAGRAPH: 2-3 bullet-style sentences. Each one = a specific achievement/skill from the CV that directly answers a JD requirement. Use numbers when available. Show impact, not duties.
+4. CLOSING: One sentence requesting next steps. Be confident but not pushy. "I'd welcome the opportunity to discuss how I can contribute" is better than begging for an interview.
+5. SIGN-OFF: Use "Best regards," followed by candidate name. Do NOT add any contact details or links — those will be added separately by the user.
 
-## RULES
-1. ONLY reference skills, experience, and qualifications that exist in the CV. Never fabricate.
-2. Keep the email SHORT — 3-4 paragraphs maximum. Recruiters receive hundreds of emails.
-3. Be professional but warm — not robotic or overly formal.
-4. Mention 2-3 KEY strengths from the CV that directly match the job requirements.
-5. Include a clear call-to-action (e.g., requesting an interview or a call).
-6. The email should feel personal and specific to this role — NOT a generic template.
-7. Do NOT include the candidate's full address or the company's address — this is an email, not a letter.
+## CRITICAL RULES:
+- TOTAL LENGTH: 8-12 sentences MAXIMUM. Recruiters spend 6 seconds scanning an email.
+- NEVER use placeholder brackets like [Company Name] or [Platform] — if the company name is in the JD, use it. If not, write around it naturally.
+- NEVER fabricate. Only use what's in the CV.
+- NEVER use clichés: "passionate", "enthusiastic", "excited", "I believe I would be a great fit", "I am confident".
+- DO use concrete language: numbers, tools, outcomes.
+- Tone: Professional, direct, and human. Like a competent colleague — not a desperate applicant.
+- Write the email as PLAIN TEXT (no HTML, no markdown).
+- End the body with ONLY "Best regards,\\n[Candidate Name]" — nothing else after that.
 
 ## CANDIDATE CV
 ---
@@ -30,6 +35,6 @@ ${jobDescription}
 ---
 
 ## OUTPUT FORMAT
-Respond ONLY in this exact JSON format, no markdown, no backticks, no extra text:
-{"subject":"The email subject line here","body":"The email body here. Use \\n for new lines between paragraphs.","candidateName":"Extracted from CV"}`
+Respond ONLY in this exact JSON format. No markdown, no backticks, no explanation:
+{"subject":"Application for [Exact Job Title] — [Candidate Name]","body":"The email body here. Use \\n for line breaks between paragraphs. End with Best regards,\\n[Name]","candidateName":"Extracted from CV"}`
 }
