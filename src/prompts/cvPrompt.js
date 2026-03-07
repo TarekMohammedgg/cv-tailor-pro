@@ -15,6 +15,7 @@ export function buildCvPrompt(cvText, jobDescription, refinementInstructions, pr
 3. Naturally incorporate keywords from the JD where they genuinely apply.
 4. Keep measurable achievements. Do not invent numbers.
 5. Output 1-2 pages maximum.
+6. PROJECT LINKS: If the original CV contains a GitHub or project URL for a project (look for [PROJECT_LINK: ...] markers in the CV text), you MUST include it as a \\href{}{} link on the project name line. Use format: \\textbf{Project Name} \\hfill \\href{URL}{\\textit{github.com/...}} \\\\
 
 ## ORIGINAL CV CONTENT
 ---
@@ -93,7 +94,7 @@ Write 2-3 sentences tailored to the JD here.
 % ===== PROJECTS =====
 \\section*{Projects}
 
-\\textbf{Project Name 1} \\\\
+\\textbf{Project Name 1} \\hfill \\href{https://github.com/user/repo}{\\textit{github.com/user/repo}} \\\\
 \\begin{itemize}
   \\item Detail about this project.
   \\item Another detail about this project.
@@ -108,6 +109,7 @@ Write 2-3 sentences tailored to the JD here.
 % IMPORTANT: Each project is a SEPARATE block.
 % The \\textbf{Project Name} line must be OUTSIDE any itemize environment.
 % Each project has its OWN \\begin{itemize}...\\end{itemize}.
+% If a [PROJECT_LINK: URL] exists for a project, use \\hfill \\href{URL}{\\textit{...}} on the name line. If no URL exists, omit the \\hfill \\href{} part (like Project Name 2 above).
 
 % ===== EDUCATION =====
 \\section*{Education}

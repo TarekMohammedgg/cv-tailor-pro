@@ -21,6 +21,14 @@ export async function extractTextFromPdf(file) {
       .map((item) => item.str)
       .join(' ')
     fullText += pageText + '\n\n'
+
+    const annotations = await page.getAnnotations()
+    const links = annotations
+      .filter(a => a.subtype === 'Link' && a.url)
+      .map(a => `[PROJECT_LINK: ${a.url}]`)
+    if (links.length > 0) {
+      fullText += links.join('\n') + '\n'
+    }
   }
 
   return fullText.trim()
