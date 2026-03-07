@@ -4,29 +4,16 @@ import { buildEmailPrompt } from '../prompts/emailPrompt.js'
 /**
  * Generate tailored CV LaTeX
  */
-export async function generateTailoredCV({ cvText, jobDescription, provider, apiKey, geminiModel }) {
+export async function generateTailoredCV({ cvText, jobDescription, apiKey, geminiModel }) {
   const prompt = buildCvPrompt(cvText, jobDescription)
-
-  if (provider !== 'gemini') {
-    throw new Error(
-      `${provider === 'openai' ? 'OpenAI' : 'Claude'} is not supported in this version. ` +
-      'Please use Google Gemini (free) instead.'
-    )
-  }
-
   return callGemini(prompt, apiKey, geminiModel)
 }
 
 /**
  * Generate a professional application email
  */
-export async function generateApplicationEmail({ cvText, jobDescription, provider, apiKey, geminiModel }) {
+export async function generateApplicationEmail({ cvText, jobDescription, apiKey, geminiModel }) {
   const prompt = buildEmailPrompt(cvText, jobDescription)
-
-  if (provider !== 'gemini') {
-    throw new Error('Please use Google Gemini for email generation.')
-  }
-
   const rawText = await callGeminiRaw(prompt, apiKey, geminiModel)
 
   try {

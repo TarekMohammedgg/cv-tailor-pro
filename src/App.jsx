@@ -60,7 +60,6 @@ export default function App() {
       const latex = await generateTailoredCV({
         cvText,
         jobDescription,
-        provider: settings.provider,
         apiKey: settings.apiKey,
         geminiModel: settings.geminiModel,
       })

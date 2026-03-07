@@ -52,7 +52,6 @@ export default function EmailSection({ cvText, jobDescription, settings }) {
       const result = await generateApplicationEmail({
         cvText,
         jobDescription,
-        provider: settings.provider,
         apiKey: settings.apiKey,
         geminiModel: settings.geminiModel,
       })
