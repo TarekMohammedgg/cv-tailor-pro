@@ -5,24 +5,37 @@
  * @returns {string} - Complete prompt
  */
 export function buildEmailPrompt(cvText, jobDescription) {
-  return `You are a senior HR recruiter with 15+ years of experience. You know exactly what makes a hiring manager stop and read an application email vs. delete it. Write an application email FROM the candidate below TO a hiring team.
+  return `You are a senior tech recruiter. Write a job application email FROM the candidate TO the hiring team.
 
-## WHAT RECRUITERS ACTUALLY WANT (follow these strictly):
-1. SUBJECT LINE: Must include the exact job title from the JD + candidate name. No creativity — recruiters filter by subject. Example: "Application for [Job Title] — [Candidate Name]"
-2. OPENING: One sentence max. State the role you're applying for and ONE hook (strongest match to JD). NO "I am writing to express my enthusiastic interest" — that's filler that recruiters skip.
-3. VALUE PARAGRAPH: 2-3 bullet-style sentences. Each one = a specific achievement/skill from the CV that directly answers a JD requirement. Use numbers when available. Show impact, not duties.
-4. CLOSING: One sentence requesting next steps. Be confident but not pushy. "I'd welcome the opportunity to discuss how I can contribute" is better than begging for an interview.
-5. SIGN-OFF: Use "Best regards," followed by candidate name. Do NOT add any contact details or links — those will be added separately by the user.
+## EXACT STRUCTURE TO FOLLOW:
+
+Line 1: "Dear Hiring Team,"
+Line 2: [empty line]
+Line 3: Opening sentence — state the EXACT job title + ONE sentence proving you match the MOST IMPORTANT JD requirement. Mention years/months of experience if relevant. Keep to 2-3 lines max.
+Line 4: [empty line]
+Line 5: "Relevant to your requirements:"
+Lines 6-8: Exactly 3 bullet points starting with "- ". Each bullet MUST directly answer a SPECIFIC requirement from the Job Description. Use numbers/metrics from the CV when available. Each bullet = 1-2 lines max.
+Line 9: [empty line]
+Line 10: Closing — ONE sentence. Mention attached CV + availability. Example: "My CV is attached with full project details. I'm available for a call or technical interview at your convenience."
+Line 11: [empty line]
+Line 12: "Best regards,"
+Line 13: [Candidate full name from CV]
 
 ## CRITICAL RULES:
-- TOTAL LENGTH: 8-12 sentences MAXIMUM. Recruiters spend 6 seconds scanning an email.
-- NEVER use placeholder brackets like [Company Name] or [Platform] — if the company name is in the JD, use it. If not, write around it naturally.
-- NEVER fabricate. Only use what's in the CV.
-- NEVER use clichés: "passionate", "enthusiastic", "excited", "I believe I would be a great fit", "I am confident".
-- DO use concrete language: numbers, tools, outcomes.
-- Tone: Professional, direct, and human. Like a competent colleague — not a desperate applicant.
-- Write the email as PLAIN TEXT (no HTML, no markdown).
-- End the body with ONLY "Best regards,\\n[Candidate Name]" — nothing else after that.
+
+1. MAPPING: Read EACH requirement in the Job Description. For the 3 bullets, pick the 3 MOST IMPORTANT JD requirements and find matching evidence from the CV. If the JD asks for "Figma to Flutter UI" and the CV mentions responsive UI, the bullet should say "Responsive UI implementation converting designs into Flutter interfaces across 20+ device types".
+
+2. KEYWORDS: Use the EXACT technologies/tools mentioned in the JD (e.g., if JD says "GetX and Provider", mention both by name — but ONLY if they exist in the CV).
+
+3. NEVER FABRICATE: Only use information from the CV. If the CV doesn't mention a JD requirement, skip it and use another relevant match.
+
+4. NO CLICHÉS: Never use "passionate", "enthusiastic", "excited", "I believe", "I am confident", "I would be a great fit".
+
+5. NO BRACKETS: Never use [Company Name] or [Platform] placeholders. If the company name is in the JD, use it. If not, just skip it.
+
+6. TOTAL LENGTH: 8-12 sentences maximum including the greeting and sign-off.
+
+7. NO BULLET SYMBOLS other than "- " (dash space). Do NOT use * or • or numbers.
 
 ## CANDIDATE CV
 ---
@@ -36,5 +49,5 @@ ${jobDescription}
 
 ## OUTPUT FORMAT
 Respond ONLY in this exact JSON format. No markdown, no backticks, no explanation:
-{"subject":"Application for [Exact Job Title] — [Candidate Name]","body":"The email body here. Use \\n for line breaks between paragraphs. End with Best regards,\\n[Name]","candidateName":"Extracted from CV"}`
+{"subject":"Application for [Exact Job Title from JD] — [Candidate Full Name]","body":"Dear Hiring Team,\\n\\nOpening sentence here.\\n\\nRelevant to your requirements:\\n- Bullet 1 matching JD requirement.\\n- Bullet 2 matching JD requirement.\\n- Bullet 3 matching JD requirement.\\n\\nClosing sentence here.\\n\\nBest regards,\\n[Candidate Name]","candidateName":"[Name from CV]"}`
 }
