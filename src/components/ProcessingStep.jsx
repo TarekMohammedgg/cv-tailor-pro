@@ -5,7 +5,6 @@ const STATUS_MESSAGES = {
   extracting: 'Extracting text from your CV...',
   generating: 'AI is tailoring your CV to the job description...',
   compiling: 'Compiling LaTeX to PDF...',
-  uploading: 'Saving to Supabase...',
   done: 'Complete!',
 }
 
@@ -35,8 +34,8 @@ export default function ProcessingStep({ status }) {
 
       {/* Progress hints */}
       <div className="mt-8 space-y-2">
-        {['extracting', 'generating', 'compiling', 'uploading'].map((step) => {
-          const stepOrder = ['extracting', 'generating', 'compiling', 'uploading']
+        {['extracting', 'generating', 'compiling'].map((step) => {
+          const stepOrder = ['extracting', 'generating', 'compiling']
           const currentIndex = stepOrder.indexOf(status)
           const stepIndex = stepOrder.indexOf(step)
           const isDone = stepIndex < currentIndex

@@ -25,7 +25,7 @@ const CONTACT_FIELDS = [
   { key: 'portfolio', label: 'Portfolio', icon: Globe, placeholder: 'yourwebsite.com' },
 ]
 
-export default function EmailSection({ cvText, jobDescription, settings, getEffective, envEdgeFunctionUrl }) {
+export default function EmailSection({ cvText, jobDescription, settings }) {
   const [email, setEmail] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -54,7 +54,6 @@ export default function EmailSection({ cvText, jobDescription, settings, getEffe
         jobDescription,
         provider: settings.provider,
         apiKey: settings.apiKey,
-        edgeFunctionUrl: getEffective(settings.edgeFunctionUrl, envEdgeFunctionUrl),
         geminiModel: settings.geminiModel,
       })
       setEmail(result)

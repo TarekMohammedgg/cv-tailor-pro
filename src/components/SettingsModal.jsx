@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { X, Eye, EyeOff, Brain, ExternalLink, ChevronDown, ChevronUp, Wrench } from 'lucide-react'
+import { X, Eye, EyeOff, Brain, ExternalLink } from 'lucide-react'
 
 const AI_PROVIDERS = [
   {
@@ -54,13 +54,9 @@ export default function SettingsModal({ isOpen, onClose, onSettingsChange }) {
     provider: 'gemini',
     apiKey: '',
     geminiModel: '',
-    supabaseUrl: '',
-    supabaseAnonKey: '',
-    edgeFunctionUrl: '',
     ...loadSettings(),
   }))
   const [showApiKey, setShowApiKey] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
 
   useEffect(() => {
     onSettingsChange(settings)
@@ -193,56 +189,6 @@ export default function SettingsModal({ isOpen, onClose, onSettingsChange }) {
               </select>
             </section>
           )}
-
-          {/* Advanced (collapsed) */}
-          <section className="border-t border-white/5 pt-4">
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-300 transition w-full"
-            >
-              <Wrench size={12} />
-              <span>Advanced Settings</span>
-              {showAdvanced ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-            </button>
-
-            {showAdvanced && (
-              <div className="mt-4 space-y-3">
-                <p className="text-xs text-gray-600 mb-3">
-                  Pre-configured by the site owner. Only change if you know what you're doing.
-                </p>
-                <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Supabase URL</label>
-                  <input
-                    type="url"
-                    value={settings.supabaseUrl}
-                    onChange={(e) => handleChange('supabaseUrl', e.target.value)}
-                    placeholder="Uses default if empty"
-                    className="input-field text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Supabase Anon Key</label>
-                  <input
-                    type="password"
-                    value={settings.supabaseAnonKey}
-                    onChange={(e) => handleChange('supabaseAnonKey', e.target.value)}
-                    placeholder="Uses default if empty"
-                    className="input-field text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-1">Edge Function URL</label>
-                  <input
-                    type="url"
-                    value={settings.edgeFunctionUrl}
-                    onChange={(e) => handleChange('edgeFunctionUrl', e.target.value)}
-                    placeholder="Uses default if empty"
-                    className="input-field text-sm"
-                  />
-                </div>
-              </div>
-            )}
-          </section>
         </div>
 
         {/* Footer */}

@@ -21,8 +21,6 @@ export default function ResultStep({
   cvText,
   jobDescription,
   settings,
-  getEffective,
-  envEdgeFunctionUrl,
 }) {
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState(pdfBlob ? 'preview' : 'latex')
@@ -142,8 +140,6 @@ export default function ResultStep({
         cvText={cvText}
         jobDescription={jobDescription}
         settings={settings}
-        getEffective={getEffective}
-        envEdgeFunctionUrl={envEdgeFunctionUrl}
       />
 
       {/* Tabs */}

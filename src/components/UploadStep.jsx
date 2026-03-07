@@ -194,7 +194,7 @@ export default function UploadStep({
           Generate Tailored CV
         </button>
         <p className="text-xs text-gray-600 mt-3 max-w-sm mx-auto">
-          Your CV will be rewritten in LaTeX, optimized for ATS, compiled to PDF, and saved to Supabase (if configured).
+          Your CV will be rewritten in LaTeX, optimized for ATS, and compiled to PDF for download.
         </p>
       </div>
     </div>
