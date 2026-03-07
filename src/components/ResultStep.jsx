@@ -10,6 +10,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { downloadPdf } from '../lib/latexToPdf.js'
+import EmailSection from './EmailSection.jsx'
 
 export default function ResultStep({
   latexCode,
@@ -17,6 +18,11 @@ export default function ResultStep({
   pdfPreviewUrl,
   compilationError,
   onReset,
+  cvText,
+  jobDescription,
+  settings,
+  getEffective,
+  envEdgeFunctionUrl,
 }) {
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState(pdfBlob ? 'preview' : 'latex')
@@ -130,6 +136,15 @@ export default function ResultStep({
           </div>
         </div>
       )}
+
+      {/* Email Generator */}
+      <EmailSection
+        cvText={cvText}
+        jobDescription={jobDescription}
+        settings={settings}
+        getEffective={getEffective}
+        envEdgeFunctionUrl={envEdgeFunctionUrl}
+      />
 
       {/* Tabs */}
       <div className="card p-0 overflow-hidden">

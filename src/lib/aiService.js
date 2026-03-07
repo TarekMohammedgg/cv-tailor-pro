@@ -1,4 +1,5 @@
 import { buildCvPrompt } from '../prompts/cvPrompt.js'
+import { buildEmailPrompt } from '../prompts/emailPrompt.js'
 
 /**
  * Generate tailored CV LaTeX using the selected AI provider
@@ -22,6 +23,48 @@ export async function generateTailoredCV({ cvText, jobDescription, provider, api
       return callViaEdgeFunction(prompt, 'claude', apiKey, edgeFunctionUrl)
     default:
       throw new Error(`Unknown provider: ${provider}`)
+  }
+}
+
+/**
+ * Generate a professional application email
+ * @returns {Promise<{subject: string, body: string, candidateName: string}>}
+ */
+export async function generateApplicationEmail({ cvText, jobDescription, provider, apiKey, edgeFunctionUrl, geminiModel }) {
+  const prompt = buildEmailPrompt(cvText, jobDescription)
+  let rawText
+
+  switch (provider) {
+    case 'gemini':
+      rawText = await callGeminiRaw(prompt, apiKey, geminiModel)
+      break
+    case 'openai':
+      rawText = await callViaEdgeFunctionRaw(prompt, 'openai', apiKey, edgeFunctionUrl)
+      break
+    case 'claude':
+      rawText = await callViaEdgeFunctionRaw(prompt, 'claude', apiKey, edgeFunctionUrl)
+      break
+    default:
+      throw new Error(`Unknown provider: ${provider}`)
+  }
+
+  // Parse JSON from AI response
+  try {
+    const cleaned = rawText
+      .replace(/```json\s*/gi, '')
+      .replace(/```\s*/g, '')
+      .trim()
+    // Find the JSON object in the response
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error('No JSON found')
+    const parsed = JSON.parse(jsonMatch[0])
+    return {
+      subject: parsed.subject || '',
+      body: (parsed.body || '').replace(/\\n/g, '\n'),
+      candidateName: parsed.candidateName || '',
+    }
+  } catch (err) {
+    throw new Error('Failed to parse email response. Please try again.')
   }
 }
 
@@ -156,4 +199,63 @@ function cleanLatexOutput(text) {
   }
 
   return cleaned.trim()
+}
+
+// ─── Raw text helpers (for email generation) ──────────
+
+/**
+ * Call Gemini and return raw text (no LaTeX cleaning)
+ */
+async function callGeminiRaw(prompt, apiKey, geminiModel) {
+  const modelsToTry = geminiModel
+    ? [geminiModel, ...GEMINI_MODELS.filter((m) => m !== geminiModel)]
+    : GEMINI_MODELS
+
+  let lastError = null
+  for (const model of modelsToTry) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err?.error?.message || `Gemini error: ${res.status}`)
+      }
+      const data = await res.json()
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      if (!text) throw new Error('Empty response')
+      return text
+    } catch (err) {
+      lastError = err
+      const isRetryable = err.message?.includes('quota') || err.message?.includes('429') || err.message?.includes('not found')
+      if (!isRetryable) throw err
+    }
+  }
+  throw lastError
+}
+
+/**
+ * Call Edge Function and return raw text
+ */
+async function callViaEdgeFunctionRaw(prompt, provider, apiKey, edgeFunctionUrl) {
+  if (!edgeFunctionUrl) {
+    throw new Error(`${provider} requires the Edge Function URL.`)
+  }
+  const res = await fetch(edgeFunctionUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, provider, apiKey }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err?.error || `Edge Function error: ${res.status}`)
+  }
+  const data = await res.json()
+  return data.latex || data.text || ''
 }

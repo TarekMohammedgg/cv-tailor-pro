@@ -234,6 +234,11 @@ export default function App() {
             pdfPreviewUrl={pdfPreviewUrl}
             compilationError={compilationError}
             onReset={handleReset}
+            cvText={cvText}
+            jobDescription={jobDescription}
+            settings={settings}
+            getEffective={getEffective}
+            envEdgeFunctionUrl={ENV_EDGE_FUNCTION_URL}
           />
         )}
       </main>
