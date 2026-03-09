@@ -34,7 +34,8 @@ Fill in the LaTeX template below with the tailored CV content. Follow these rule
 - Each job in experience must be its OWN block with its OWN \\begin{itemize}...\\end{itemize}.
 - Use \\textbf{} for names/titles, \\textit{} for dates/locations.
 - Use \\hfill to right-align dates on the same line as titles.
-- Skills section: use a simple format like "\\textbf{Category:} item1, item2, item3" with line breaks between categories.
+- Technical Skills section: use a simple format like "\\textbf{Category:} item1, item2, item3" with line breaks between categories.
+- Courses & Certifications: Include links using \\href{URL}{[Certificate]} if a [PROJECT_LINK: URL] is provided.
 
 ## EXACT TEMPLATE TO USE (fill in the content):
 
@@ -79,8 +80,17 @@ Fill in the LaTeX template below with the tailored CV content. Follow these rule
 \\section*{Summary}
 Write 2-3 sentences tailored to the JD here.
 
+% ===== EDUCATION =====
+\\section*{Education}
+
+\\textbf{Degree} \\hfill \\textit{YYYY -- YYYY} \\\\
+\\textit{University Name, City, Country}
+\\begin{itemize}
+  \\item GPA: X.XX / 4.0 | Graduation Project: Project Name --- Grade: Excellent
+\\end{itemize}
+
 % ===== EXPERIENCE =====
-\\section*{Professional Experience}
+\\section*{Experience}
 
 \\textbf{Job Title} \\hfill \\textit{MM/YYYY -- MM/YYYY} \\\\
 \\textit{Company Name, City, Country}
@@ -94,7 +104,7 @@ Write 2-3 sentences tailored to the JD here.
 % ===== PROJECTS =====
 \\section*{Projects}
 
-\\textbf{Project Name 1} \\hfill \\href{https://github.com/user/repo}{\\textit{github.com/user/repo}} \\\\
+\\textbf{Project Name 1} \\hfill \\href{https://github.com/user/repo}{[GitHub]} \\\\
 \\begin{itemize}
   \\item Detail about this project.
   \\item Another detail about this project.
@@ -109,47 +119,52 @@ Write 2-3 sentences tailored to the JD here.
 % IMPORTANT: Each project is a SEPARATE block.
 % The \\textbf{Project Name} line must be OUTSIDE any itemize environment.
 % Each project has its OWN \\begin{itemize}...\\end{itemize}.
-% If a [PROJECT_LINK: URL] exists for a project, use \\hfill \\href{URL}{\\textit{...}} on the name line. If no URL exists, omit the \\hfill \\href{} part (like Project Name 2 above).
+% If a [PROJECT_LINK: URL] exists for a project, use \\hfill \\href{URL}{[GitHub]} on the name line. If no URL exists, omit the \\hfill \\href{} part (like Project Name 2 above).
 
-% ===== EDUCATION =====
-\\section*{Education}
+% ===== TECHNICAL SKILLS =====
+\\section*{Technical Skills}
 
-\\textbf{Degree} \\hfill \\textit{YYYY -- YYYY} \\\\
-\\textit{University Name, City, Country}
+\\textbf{Languages:} Dart, Python, Java, JavaScript \\\\
+\\textbf{Mobile Development:} Flutter, Firebase, Supabase, REST APIs, etc. \\\\
+\\textbf{State Management:} Cubit/Bloc, Provider, etc. \\\\
+\\textbf{Architecture:} MVVM, Clean Architecture \\\\
+\\textbf{Backend:} Fast API, Supabase, etc. \\\\
+\\textbf{Tools \\& Platforms:} Android Studio, VS Code, Git, etc. \\\\
+\\textbf{UI/UX:} Figma
+
+% ===== SOFT SKILLS =====
+\\section*{Soft Skills}
+Research, Team Work, Time Management, Communication Skills
+
+% ===== COURSES & CERTIFICATIONS =====
+\\section*{Courses \\& Certifications}
+
 \\begin{itemize}
-  \\item GPA: X.XX/4.0
-  \\item Notable achievement or project.
+  \\item \\textbf{Course Name} --- \\textit{Institution Name} \\hfill \\href{URL}{[Certificate]}
+  \\item \\textbf{Another Course Name} --- \\textit{Institution Name}
 \\end{itemize}
-
-% ===== SKILLS =====
-\\section*{Skills}
-
-\\textbf{Mobile Development:} Flutter, Firebase, REST APIs, etc. \\\\
-\\textbf{State Management:} Cubit, Provider, etc. \\\\
-\\textbf{Languages:} Dart, Python, etc. \\\\
-\\textbf{Tools:} Git, VS Code, etc.
 
 % ===== LANGUAGES =====
 \\section*{Languages}
-Arabic (Native), English (Fluent)
+Arabic (Native) | English (Fluent)
 
 \\end{document}
 
 ## OUTPUT
-Output ONLY the filled-in LaTeX code. No explanations. No markdown. Start with \\documentclass and end with \\end{document}.${
+Output ONLY the filled-in LaTeX code. No explanations. No markdown. Start with \\documentclass and end with \\end{document}.\${
   refinementInstructions && previousLatex
-    ? `
+    ? \`
 
 ## CURRENT TAILORED CV (LaTeX — already generated)
 ---
-${previousLatex}
+\${previousLatex}
 ---
 
 ## USER REFINEMENT INSTRUCTIONS
 The user wants the following specific changes applied to the CURRENT CV above:
-${refinementInstructions}
+\${refinementInstructions}
 
-Apply ONLY the requested changes. Keep everything else identical. Output the full updated LaTeX document.`
+Apply ONLY the requested changes. Keep everything else identical. Output the full updated LaTeX document.\`
     : ''
-}`
+}\`
 }

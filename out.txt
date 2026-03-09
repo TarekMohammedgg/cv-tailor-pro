@@ -1,0 +1,14 @@
+node:fs:2425
+    return binding.writeFileUtf8(
+                   ^
+
+Error: EBUSY: resource busy or locked, open 'e:\root\Programming\web-development\cv-tailor-pro\out.txt'
+    at writeFileSync (node:fs:2425:20)
+    at file:///e:/root/Programming/web-development/cv-tailor-pro/fixed_extract.mjs:40:1 {
+  errno: -4082,
+  code: 'EBUSY',
+  syscall: 'open',
+  path: 'e:\\root\\Programming\\web-development\\cv-tailor-pro\\out.txt'
+}
+
+Node.js v22.19.0
