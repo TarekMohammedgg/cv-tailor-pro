@@ -1,5 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react'
+﻿import React, { useState, useRef, useCallback } from 'react'
 import { Upload, FileText, X, Sparkles, AlertCircle } from 'lucide-react'
+import { stripLinkMetadataText } from '../lib/cvSourceParser.js'
 
 export default function UploadStep({
   cvFile,
@@ -16,6 +17,11 @@ export default function UploadStep({
   const [dragOver, setDragOver] = useState(false)
   const [extractError, setExtractError] = useState(null)
   const fileInputRef = useRef(null)
+
+  const previewText = stripLinkMetadataText(cvText)
+  const extractedWordCount = previewText
+    ? previewText.split(/\s+/).filter(Boolean).length
+    : 0
 
   const handleFile = useCallback(
     async (file) => {
@@ -35,15 +41,15 @@ export default function UploadStep({
       try {
         const { extractTextFromPdf } = await import('../lib/pdfExtractor.js')
         const text = await extractTextFromPdf(file)
-        if (!text.trim()) {
-          setExtractError('Could not extract text from this PDF. It may be scanned/image-based.')
+        if (!stripLinkMetadataText(text).trim()) {
+          setExtractError('Could not extract text from this PDF. It may be scanned or image-based.')
           setCvText('')
         } else {
           setCvText(text)
         }
-      } catch (err) {
-        console.error('PDF extraction failed:', err)
-        setExtractError('Failed to extract text from PDF: ' + err.message)
+      } catch (error) {
+        console.error('PDF extraction failed:', error)
+        setExtractError('Failed to extract text from PDF: ' + error.message)
         setCvText('')
       } finally {
         setExtracting(false)
@@ -53,17 +59,17 @@ export default function UploadStep({
   )
 
   const handleDrop = useCallback(
-    (e) => {
-      e.preventDefault()
+    (event) => {
+      event.preventDefault()
       setDragOver(false)
-      const file = e.dataTransfer.files?.[0]
+      const file = event.dataTransfer.files?.[0]
       if (file) handleFile(file)
     },
     [handleFile]
   )
 
-  const handleDragOver = (e) => {
-    e.preventDefault()
+  const handleDragOver = (event) => {
+    event.preventDefault()
     setDragOver(true)
   }
 
@@ -73,14 +79,13 @@ export default function UploadStep({
     setExtractError(null)
   }
 
-  const canGenerate = cvFile && cvText && jobDescription.trim().length > 20 && isConfigured
+  const canGenerate = cvFile && previewText && jobDescription.trim().length > 20 && isConfigured
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 px-4">
-      {/* CV Upload */}
       <div className="card">
         <h3 className="font-display font-semibold text-white mb-1">Upload Your CV</h3>
-        <p className="text-sm text-gray-500 mb-4">PDF format — text will be extracted automatically</p>
+        <p className="text-sm text-gray-500 mb-4">PDF format - text and link metadata will be extracted automatically</p>
 
         {!cvFile ? (
           <div
@@ -94,7 +99,7 @@ export default function UploadStep({
               ref={fileInputRef}
               type="file"
               accept="application/pdf"
-              onChange={(e) => handleFile(e.target.files?.[0])}
+              onChange={(event) => handleFile(event.target.files?.[0])}
               className="hidden"
             />
             <Upload size={32} className="mx-auto mb-3 text-gray-500" />
@@ -116,14 +121,14 @@ export default function UploadStep({
                   </p>
                   <p className="text-xs text-gray-500">
                     {(cvFile.size / 1024).toFixed(1)} KB
-                    {cvText && ` — ${cvText.split(/\s+/).length} words extracted`}
-                    {extracting && ' — extracting...'}
+                    {previewText && ` - ${extractedWordCount} words extracted`}
+                    {extracting && ' - extracting...' }
                   </p>
                 </div>
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation()
+                onClick={(event) => {
+                  event.stopPropagation()
                   removeCv()
                 }}
                 className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-red-400 transition"
@@ -141,29 +146,27 @@ export default function UploadStep({
           </div>
         )}
 
-        {/* Show extracted text preview */}
-        {cvText && (
+        {previewText && (
           <details className="mt-3">
             <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-300 transition">
-              Preview extracted text ({cvText.length} characters)
+              Preview extracted text ({previewText.length} characters)
             </summary>
             <pre className="mt-2 text-xs text-gray-400 bg-[#0d0f1a] rounded-lg p-3 max-h-40 overflow-y-auto whitespace-pre-wrap font-mono">
-              {cvText.slice(0, 2000)}
-              {cvText.length > 2000 && '...'}
+              {previewText.slice(0, 2000)}
+              {previewText.length > 2000 && '...'}
             </pre>
           </details>
         )}
       </div>
 
-      {/* Job Description */}
       <div className="card">
         <h3 className="font-display font-semibold text-white mb-1">Job Description</h3>
-        <p className="text-sm text-gray-500 mb-4">Paste the full job description you're targeting</p>
+        <p className="text-sm text-gray-500 mb-4">Paste the full job description you are targeting</p>
 
         <textarea
           value={jobDescription}
-          onChange={(e) => setJobDescription(e.target.value)}
-          placeholder="Paste the job description here...&#10;&#10;Include role title, responsibilities, required skills, and qualifications for best results."
+          onChange={(event) => setJobDescription(event.target.value)}
+          placeholder="Paste the job description here...&#10;&#10;Include role title, responsibilities, required skills, and qualifications for the best results."
           className="input-field min-h-[200px] resize-y text-sm leading-relaxed"
           spellCheck={false}
         />
@@ -178,7 +181,6 @@ export default function UploadStep({
         </div>
       </div>
 
-      {/* Generate Button */}
       <div className="text-center pt-2 pb-8">
         {!isConfigured && (
           <p className="text-sm text-amber-400 mb-3">
@@ -194,7 +196,7 @@ export default function UploadStep({
           Generate Tailored CV
         </button>
         <p className="text-xs text-gray-600 mt-3 max-w-sm mx-auto">
-          Your CV will be rewritten in LaTeX, optimized for ATS, and compiled to PDF for download.
+          Reference Locked mode keeps the rebuilt master CV structure stable while tailoring the wording to the job.
         </p>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+﻿import React, { useState, useEffect, useCallback } from 'react'
 import Header from './components/Header.jsx'
 import StepIndicator from './components/StepIndicator.jsx'
 import SettingsModal from './components/SettingsModal.jsx'
@@ -9,22 +9,18 @@ import { generateTailoredCV } from './lib/aiService.js'
 import { convertLatexToPdf, createPdfPreviewUrl } from './lib/latexToPdf.js'
 
 export default function App() {
-  // UI state
   const [showSettings, setShowSettings] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [processingStatus, setProcessingStatus] = useState(null)
   const [error, setError] = useState(null)
 
-  // Settings
   const [settings, setSettings] = useState({})
 
-  // Input state
   const [cvFile, setCvFile] = useState(null)
   const [cvText, setCvText] = useState('')
   const [jobDescription, setJobDescription] = useState('')
   const [extracting, setExtracting] = useState(false)
 
-  // Result state
   const [latexCode, setLatexCode] = useState('')
   const [pdfBlob, setPdfBlob] = useState(null)
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null)
@@ -33,7 +29,6 @@ export default function App() {
 
   const isConfigured = Boolean(settings.apiKey)
 
-  // Auto-open settings if no API key is configured
   useEffect(() => {
     try {
       const saved = localStorage.getItem('cv-tailor-settings')
@@ -41,11 +36,13 @@ export default function App() {
       if (!parsed.apiKey) {
         setTimeout(() => setShowSettings(true), 500)
       }
-    } catch {}
+    } catch {
+      setTimeout(() => setShowSettings(true), 500)
+    }
   }, [])
 
-  const handleSettingsChange = useCallback((newSettings) => {
-    setSettings(newSettings)
+  const handleSettingsChange = useCallback((nextSettings) => {
+    setSettings(nextSettings)
   }, [])
 
   const handleGenerate = async () => {
@@ -56,13 +53,13 @@ export default function App() {
     setCompilationError(null)
 
     try {
-      // Step 1: Generate LaTeX via AI
       setProcessingStatus('generating')
       const latex = await generateTailoredCV({
         cvText,
         jobDescription,
         apiKey: settings.apiKey,
         geminiModel: settings.geminiModel,
+        templateMode: settings.templateMode,
       })
 
       if (!latex || !latex.includes('\\documentclass')) {
@@ -70,8 +67,6 @@ export default function App() {
       }
 
       setLatexCode(latex)
-
-      // Step 2: Compile LaTeX to PDF
       setProcessingStatus('compiling')
 
       try {
@@ -79,16 +74,16 @@ export default function App() {
         const previewUrl = createPdfPreviewUrl(blob)
         setPdfBlob(blob)
         setPdfPreviewUrl(previewUrl)
-      } catch (compileErr) {
-        console.warn('PDF compilation failed:', compileErr)
-        setCompilationError(compileErr.message)
+      } catch (compileError) {
+        console.warn('PDF compilation failed:', compileError)
+        setCompilationError(compileError.message)
       }
 
       setProcessingStatus('done')
       setCurrentStep(3)
-    } catch (err) {
-      console.error('Generation failed:', err)
-      setError(err.message)
+    } catch (generationError) {
+      console.error('Generation failed:', generationError)
+      setError(generationError.message)
       setCurrentStep(1)
       setProcessingStatus(null)
     }
@@ -102,22 +97,22 @@ export default function App() {
     setCompilationError(null)
 
     try {
-      const newLatex = await generateTailoredCV({
+      const nextLatex = await generateTailoredCV({
         cvText,
         jobDescription,
         apiKey: settings.apiKey,
         geminiModel: settings.geminiModel,
         refinementInstructions: refinementText,
         previousLatex: latexCode,
+        templateMode: settings.templateMode,
       })
 
-      if (!newLatex || !newLatex.includes('\\documentclass')) {
+      if (!nextLatex || !nextLatex.includes('\\documentclass')) {
         throw new Error('AI did not return valid LaTeX code. Please try again.')
       }
 
-      setLatexCode(newLatex)
+      setLatexCode(nextLatex)
 
-      // Revoke old preview URL before creating a new one
       if (pdfPreviewUrl) {
         URL.revokeObjectURL(pdfPreviewUrl)
         setPdfPreviewUrl(null)
@@ -125,17 +120,17 @@ export default function App() {
       }
 
       try {
-        const blob = await convertLatexToPdf(newLatex)
+        const blob = await convertLatexToPdf(nextLatex)
         const previewUrl = createPdfPreviewUrl(blob)
         setPdfBlob(blob)
         setPdfPreviewUrl(previewUrl)
-      } catch (compileErr) {
-        console.warn('PDF compilation failed:', compileErr)
-        setCompilationError(compileErr.message)
+      } catch (compileError) {
+        console.warn('PDF compilation failed:', compileError)
+        setCompilationError(compileError.message)
       }
-    } catch (err) {
-      console.error('Regeneration failed:', err)
-      setError(err.message)
+    } catch (generationError) {
+      console.error('Regeneration failed:', generationError)
+      setError(generationError.message)
     } finally {
       setIsRegenerating(false)
     }
@@ -179,7 +174,7 @@ export default function App() {
                   onClick={() => setError(null)}
                   className="ml-auto text-gray-500 hover:text-white text-sm"
                 >
-                  ✕
+                  x
                 </button>
               </div>
             </div>
@@ -221,7 +216,7 @@ export default function App() {
 
       <footer className="text-center py-4 border-t border-white/5">
         <p className="text-xs text-gray-600">
-          CV Tailor Pro — Your data stays on your device. API keys are stored locally.
+          CV Tailor Pro - your data stays on your device. API keys are stored locally.
         </p>
       </footer>
 
