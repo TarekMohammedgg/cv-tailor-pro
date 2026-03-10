@@ -2,12 +2,12 @@
 
 Upload a CV PDF, paste a job description, and generate a tailored LaTeX/PDF resume in the browser.
 
-The app now supports a locked master-template workflow so the generated CV can keep the same overall structure, section order, link placement, and alignment style as the reference CV.
+The app now supports a locked master-template workflow so the generated CV can keep the same overall structure, section order, link placement, alignment style, and near-matching header/body sizing of the reference CV.
 
 ## Features
 
 - Gemini-only browser-side CV tailoring
-- Locked reference-template mode for stable layout, section rules, and hyperlinks
+- Locked reference-template mode for stable layout, section rules, tuned sans-serif typography, and hyperlinks
 - Legacy freeform mode for full-document LaTeX generation
 - PDF text extraction with project/certificate link association
 - LaTeX preview and ATS/parser-friendly PDF compilation (Unicode mapping + PDF 1.4 output)
@@ -79,4 +79,5 @@ src/
 - There is no backend in this project.
 - The README previously mentioned Supabase and multiple AI providers; those are no longer part of the app.
 - No test runner is configured. Use `npm run build` as the main verification step.
+
 

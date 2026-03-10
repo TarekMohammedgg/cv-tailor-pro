@@ -89,8 +89,9 @@ const MASTER_TEMPLATE = String.raw`\documentclass[10pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[margin=0.75in]{geometry}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[left=0.75in,right=0.75in,top=1.1in,bottom=0.75in]{geometry}
 \usepackage{enumitem}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
@@ -105,11 +106,12 @@ const MASTER_TEMPLATE = String.raw`\documentclass[10pt,a4paper]{article}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \setlength{\emergencystretch}{2em}
-\titleformat{\section}{\normalsize\bfseries}{}{0pt}{}[\titlerule]
-\titlespacing*{\section}{0pt}{1.05em}{0.45em}
-\setlist[itemize]{leftmargin=1.3em, itemsep=0.18em, topsep=0.18em, parsep=0pt, partopsep=0pt}
+\titleformat{\section}{\fontsize{10.5}{12}\selectfont\bfseries}{}{0pt}{}[\titlerule]
+\titlespacing*{\section}{0pt}{1.05em}{0.25em}
+\setlist[itemize]{leftmargin=1.3em, itemsep=0.15em, topsep=0.15em, parsep=0pt, partopsep=0pt}
 
 \begin{document}
+\fontsize{10}{11.5}\selectfont
 
 __HEADER__
 
@@ -235,11 +237,12 @@ function renderHeader(header, sourceLinks) {
 
   return [
     '\\begin{center}',
-    `  {\\LARGE\\bfseries ${escapeLatexText(header.name)}} \\\\[4pt]`,
-    `  {${escapeLatexText(header.title)}} \\\\[4pt]`,
+    `  {\\fontsize{14}{16}\\selectfont\\bfseries ${escapeLatexText(header.name)}} \\\\[4pt]`,
+    `  {\\fontsize{11}{13}\\selectfont ${escapeLatexText(header.title)}} \\\\[4pt]`,
     `  ${contactParts.map((part) => escapeLatexText(part)).join(' \\enspace|\\enspace ')} \\\\`,
     `  GitHub: ${renderHref(github.url, header.githubText || github.text)} \\enspace|\\enspace LinkedIn: ${renderHref(linkedin.url, header.linkedinText || linkedin.text)}`,
     '\\end{center}',
+    '\\vspace{4pt}',
   ].join('\n')
 }
 
@@ -444,4 +447,3 @@ function escapeLatexUrl(url) {
     .replace(/([%#&_{}])/g, '\\$1')
     .replace(/ /g, '%20')
 }
-

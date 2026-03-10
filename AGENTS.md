@@ -35,7 +35,7 @@ Pure static React/Vite app. There is no backend. Gemini API calls happen directl
 |---|---|
 | `src/App.jsx` | Main 3-step workflow and state orchestration |
 | `src/lib/aiService.js` | Gemini calls, template-mode branching, JSON parsing, and final LaTeX generation |
-| `src/lib/referenceCvTemplate.js` | Locked master template, section-rule styling, ATS-friendly PDF settings, reference link fallbacks, and deterministic LaTeX renderer |
+| `src/lib/referenceCvTemplate.js` | Locked master template, tuned sans-serif typography, section-rule styling, ATS-friendly PDF settings, reference link fallbacks, and deterministic LaTeX renderer |
 | `src/lib/cvSourceParser.js` | Parses/strips the hidden link metadata block embedded in extracted CV text |
 | `src/lib/pdfExtractor.js` | PDF.js extraction plus line/link association heuristics |
 | `src/prompts/cvPrompt.js` | Locked-mode JSON prompt plus legacy freeform prompt |
@@ -61,4 +61,5 @@ Tailwind CSS plus custom utility classes in `src/index.css`.
 ### Important
 
 After each major change, update both `AGENTS.md` and `README.md` so they stay aligned with the codebase.
+
 
