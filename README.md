@@ -7,10 +7,10 @@ The app now supports a locked master-template workflow so the generated CV can k
 ## Features
 
 - Gemini-only browser-side CV tailoring
-- Locked reference-template mode for stable layout and hyperlinks
+- Locked reference-template mode for stable layout, section rules, and hyperlinks
 - Legacy freeform mode for full-document LaTeX generation
 - PDF text extraction with project/certificate link association
-- LaTeX preview and PDF compilation
+- LaTeX preview and ATS/parser-friendly PDF compilation (Unicode mapping + PDF 1.4 output)
 - Application email generation based on the extracted CV and job description
 - Local-only settings storage for API keys and template preferences
 
@@ -79,3 +79,4 @@ src/
 - There is no backend in this project.
 - The README previously mentioned Supabase and multiple AI providers; those are no longer part of the app.
 - No test runner is configured. Use `npm run build` as the main verification step.
+

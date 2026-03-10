@@ -95,12 +95,18 @@ const MASTER_TEMPLATE = String.raw`\documentclass[10pt,a4paper]{article}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
 
+% ATS/parser-friendly PDF settings.
+\input{glyphtounicode}
+\pdfgentounicode=1
+\pdfminorversion=4
+\pdfobjcompresslevel=0
+
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \setlength{\emergencystretch}{2em}
-\titleformat{\section}{\normalsize\bfseries}{}{0pt}{}
-\titlespacing*{\section}{0pt}{1.05em}{0.35em}
+\titleformat{\section}{\normalsize\bfseries}{}{0pt}{}[\titlerule]
+\titlespacing*{\section}{0pt}{1.05em}{0.45em}
 \setlist[itemize]{leftmargin=1.3em, itemsep=0.18em, topsep=0.18em, parsep=0pt, partopsep=0pt}
 
 \begin{document}
@@ -438,3 +444,4 @@ function escapeLatexUrl(url) {
     .replace(/([%#&_{}])/g, '\\$1')
     .replace(/ /g, '%20')
 }
+
